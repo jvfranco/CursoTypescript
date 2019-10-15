@@ -1,17 +1,19 @@
-abstract class View<T> {
+//namespace Views {
 
-    protected elemento: JQuery;
+    export abstract class View<T> {
 
-    constructor(seletor: string){
-        this.elemento = $(seletor);
+        protected elemento: JQuery;
+
+        constructor(seletor: string){
+            this.elemento = $(seletor);
+        }
+
+        update(model: T): void {
+            this.elemento.html(this.template(model));
+        }
+
+        abstract template(model: T): string;
+        //throw new Error('Você deve implementar o método template!');
+
     }
-
-    update(model: T): void {
-        this.elemento.html(this.template(model));
-    }
-
-    abstract template(model: T): string;
-       //throw new Error('Você deve implementar o método template!');
-   
-
-}
+//}

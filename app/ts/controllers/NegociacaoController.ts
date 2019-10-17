@@ -1,19 +1,26 @@
 import { MensagemView, NegociacoesView } from '../views/index';
 import { Negociacao, Negociacoes } from '../models/index';
+import { domInject } from '../helpers/decorators/index';
 
 export class NegociacaoController {
 
+    @domInject('#data')
     private inputData: JQuery;
+    
+    @domInject('#quantidade')
     private inputQuantidade: JQuery;
+    
+    @domInject('#valor')
     private inputValor: JQuery;
+
     private negociacoes: Negociacoes = new Negociacoes();
     private negociacoesView = new /*Views.*/NegociacoesView('#negociacoesView');
     private mensagemView = new /*Views.*/MensagemView('#mensagemView');
 
     constructor(){
-        this.inputData = $('#data');
-        this.inputQuantidade = $('#quantidade');
-        this.inputValor = $('#valor');
+        //this.inputData = $('#data');
+        //this.inputQuantidade = $('#quantidade');
+        //this.inputValor = $('#valor');
         this.negociacoesView.update(this.negociacoes);
     }
 
@@ -40,9 +47,10 @@ export class NegociacaoController {
 
         //this.negociacoes.paraArray().length = 0;
 
-        this.negociacoes.paraArray().forEach(negociacao => {
-            console.log(negociacao);
-        });
+        //this.negociacoes.paraArray().forEach(negociacao => {
+        //    console.log(negociacao);
+        //});
+
     };
 
     private ehDiaUtil(data: Date) {

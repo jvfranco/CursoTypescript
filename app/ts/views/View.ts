@@ -1,5 +1,7 @@
 //namespace Views {
 
+import { logarTempoDeExecucao } from '../helpers/decorators/index';
+
     export abstract class View<T> {
 
         protected elemento: JQuery;

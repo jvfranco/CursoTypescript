@@ -11,7 +11,8 @@
 
     paraArray(): Negociacao[] {
         //retorna um cópia do array original para que não possa ser modificado
-        return [].concat(this.negociacoes);
+        //como o array nao havia sido tipado, poderia ser passado qlqr valor para ele, como valor null ou undefined, por utilizar as Negociacao[], indicando explicitamente seu tipo
+        return ([] as Negociacao[]).concat(this.negociacoes);
     }
 
 }

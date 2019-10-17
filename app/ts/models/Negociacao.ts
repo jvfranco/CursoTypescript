@@ -9,7 +9,7 @@ export class Negociacao {
         this._quantidade = quantidade;
         this._valor = valor;
     }
-*/
+
     //Já faz a declaração da variaveis dentro do construtor
     constructor(private _data: Date, private _quantidade: number,
         private _valor: number){}
@@ -25,9 +25,11 @@ export class Negociacao {
     get valor() {
         return this._valor;
     }
+*/
+    constructor(readonly data: Date, readonly quantidade: number, readonly valor: number){}
 
     get volume() {
-        return this._quantidade * this._valor;
+        return this.quantidade * this.valor;
     }
 
 }

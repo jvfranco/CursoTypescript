@@ -1,6 +1,7 @@
 import { MensagemView, NegociacoesView } from '../views/index';
-import { Negociacao, Negociacoes } from '../models/index';
-import { domInject } from '../helpers/decorators/index';
+import { Negociacao, Negociacoes, NegociacaoParcial } from '../models/index';
+import { domInject, throttle } from '../helpers/decorators/index';
+import { NegociacaoService, HandlerFunction } from '../service/index';
 
 export class NegociacaoController {
 
@@ -17,6 +18,8 @@ export class NegociacaoController {
     private negociacoesView = new /*Views.*/NegociacoesView('#negociacoesView');
     private mensagemView = new /*Views.*/MensagemView('#mensagemView');
 
+    private negociacaoService = new NegociacaoService();
+
     constructor(){
         //this.inputData = $('#data');
         //this.inputQuantidade = $('#quantidade');
@@ -24,9 +27,8 @@ export class NegociacaoController {
         this.negociacoesView.update(this.negociacoes);
     }
 
-    adicionar(event: Event): void {
-
-        event.preventDefault();
+    @throttle()
+    adicionar(): void {        
 
         let data = new Date(this.inputData.val().replace(/-/g, ','));
 
@@ -55,6 +57,33 @@ export class NegociacaoController {
 
     private ehDiaUtil(data: Date) {
         return data.getDay() != DiaDaSemana.Sábado && data.getDay() != DiaDaSemana.Domingo;
+    }
+    
+    @throttle()
+    importaDados() {
+        /* function isOk(res: Response){
+            if(res.ok){
+                return res;
+            } else {
+                throw new Error(res.statusText);
+            }
+        } */
+
+        const isOk: HandlerFunction = (res: Response) => {
+            if(res.ok){
+                return res;
+            } else {
+                throw new Error(res.statusText);
+            }
+        }
+
+         this.negociacaoService.obterNegociacoes(isOk)
+            .then(negociacoes => { 
+                    negociacoes.forEach(negociacao =>
+                        this.negociacoes.adiciona(negociacao));
+                    this.negociacoesView.update(this.negociacoes);
+                });   
+
     }
 }
 

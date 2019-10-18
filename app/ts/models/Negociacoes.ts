@@ -1,6 +1,7 @@
- import { Negociacao } from './Negociacao';
+import { Negociacao } from './Negociacao';
+import { MeuObjeto } from './MeuObjeto';
  
- export class Negociacoes {
+export class Negociacoes implements MeuObjeto<Negociacoes> {
 
     //private negociacoes: Array<Negociacao> = []; ou
     private negociacoes: Negociacao[] = [];
@@ -15,4 +16,11 @@
         return ([] as Negociacao[]).concat(this.negociacoes);
     }
 
+    paraTexto(): void {
+        console.log(JSON.stringify(this.negociacoes));
+    }
+
+    ehIgual(negociacoes: Negociacoes): boolean {
+        return JSON.stringify(this.negociacoes) == JSON.stringify(negociacoes.paraArray());
+    }
 }

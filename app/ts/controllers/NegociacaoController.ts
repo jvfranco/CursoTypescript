@@ -2,6 +2,7 @@ import { MensagemView, NegociacoesView } from '../views/index';
 import { Negociacao, Negociacoes, NegociacaoParcial } from '../models/index';
 import { domInject, throttle } from '../helpers/decorators/index';
 import { NegociacaoService, HandlerFunction } from '../service/index';
+import { imprime } from '../helpers/index';
 
 export class NegociacaoController {
 
@@ -44,6 +45,9 @@ export class NegociacaoController {
         );
 
         this.negociacoes.adiciona(negociacao);
+
+        imprime(negociacao, this.negociacoes);
+        
         this.negociacoesView.update(this.negociacoes);
         this.mensagemView.update('Negociação adicionada com sucesso!');
 
@@ -58,9 +62,36 @@ export class NegociacaoController {
     private ehDiaUtil(data: Date) {
         return data.getDay() != DiaDaSemana.Sábado && data.getDay() != DiaDaSemana.Domingo;
     }
-    
+
     @throttle()
-    importaDados() {
+    async importaDados() {
+        try {
+            const negociacoesParaImportar = await this.negociacaoService
+                .obterNegociacoes(res => {
+                    if(res.ok) {
+                        return res;
+                    } else {
+                        throw new Error(res.statusText);
+                    }
+                });
+
+            const negociacoesJaImportadas = this.negociacoes.paraArray();
+
+            negociacoesParaImportar.filter(negociacao => 
+                !negociacoesJaImportadas.some(jaImportada => 
+                        negociacao.ehIgual(jaImportada)))
+                .forEach(negociacao => this.negociacoes.adiciona(negociacao));
+            
+            this.negociacoesView.update(this.negociacoes);
+        } catch(err) {
+            this.mensagemView.update(err.message);
+        }
+    }
+}
+        
+    
+   /*  @throttle()
+    importaDados() { */
         /* function isOk(res: Response){
             if(res.ok){
                 return res;
@@ -69,7 +100,7 @@ export class NegociacaoController {
             }
         } */
 
-        const isOk: HandlerFunction = (res: Response) => {
+        /* const isOk: HandlerFunction = (res: Response) => {
             if(res.ok){
                 return res;
             } else {
@@ -78,15 +109,21 @@ export class NegociacaoController {
         }
 
          this.negociacaoService.obterNegociacoes(isOk)
-            .then(negociacoes => { 
-                    negociacoes.forEach(negociacao =>
-                        this.negociacoes.adiciona(negociacao));
+            .then(negociacoesParaImportar => {
+                const negociacoesJaImportadas = this.negociacoes.paraArray();
+                
+                negociacoesParaImportar
+                    .filter(negociacao => 
+                        !negociacoesJaImportadas.some(jaImportada => 
+                            negociacao.ehIgual(jaImportada)))
+                            .forEach(negociacao =>
+                                this.negociacoes.adiciona(negociacao));
                     this.negociacoesView.update(this.negociacoes);
-                });   
-
+                })
+                .catch (err => this.mensagemView.update(err.message));  
     }
 }
-
+*/ 
 enum DiaDaSemana {
     Domingo,
     Segunda,
